@@ -1,0 +1,8 @@
+{
+  "name": "pix-qrcode-api",
+  "version": "1.0.0",
+  "dependencies": {
+    "qrcode": "^1.5.3",
+    "pixqrcodejs": "^1.0.4"
+  }
+}
