@@ -40,13 +40,18 @@ function gerarPixCopiaECola({ chave, nome, cidade, valor, txid, mensagem }) {
 }
 
 module.exports = async (req, res) => {
-  const { chave, nome, cidade, valor, saida, txid, mensagem, tamanho } = req.query;
+  const { chave, nome, cidade, valor, saida, txid, mensagem, tamanho, codigo } = req.query;
 
-  if (!chave || !nome || !cidade) {
-    return res.status(400).json({ erro: "Parâmetros obrigatórios: chave, nome, cidade" });
+  let brcode;
+
+  if (codigo) {
+    brcode = codigo;
+  } else {
+    if (!chave || !nome || !cidade) {
+      return res.status(400).json({ erro: "Parâmetros obrigatórios: chave, nome, cidade (ou envie 'codigo' com o copia e cola pronto)" });
+    }
+    brcode = gerarPixCopiaECola({ chave, nome, cidade, valor, txid, mensagem });
   }
-
-  const brcode = gerarPixCopiaECola({ chave, nome, cidade, valor, txid, mensagem });
 
   if (saida === "br") {
     return res.status(200).send(brcode);
@@ -54,7 +59,6 @@ module.exports = async (req, res) => {
 
   const size = parseInt(tamanho) || 300;
   const qrBuffer = await QRCode.toBuffer(brcode, { width: size });
-
   res.setHeader("Content-Type", "image/png");
   return res.send(qrBuffer);
 };
